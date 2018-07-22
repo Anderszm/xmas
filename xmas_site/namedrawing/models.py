@@ -9,10 +9,6 @@ class Person(models.Model):
 
 class Group(models.Model):
 	name = models.CharField(max_length = 50)
-	members = models.ManyToManyField(Person, through="Membership")
+	members = models.ManyToManyField(Person)
 	def __str__(self):
 		return self.name
-
-class Membership(models.Model):
-	person = models.ForeignKey(Person, on_delete=models.CASCADE)
-	group = models.ForeignKey(Group, on_delete=models.CASCADE)
