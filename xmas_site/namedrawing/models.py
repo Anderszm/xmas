@@ -4,8 +4,11 @@ from django.db import models
 
 class Person(models.Model):
 	name = models.CharField(max_length = 50)
+	def __str__(self):
+		return self.name
 
 class Group(models.Model):
-	groupname = models.CharField(max_length = 50)
-	people = models.ManyToManyField(Person)
-	
+	name = models.CharField(max_length = 50)
+	members = models.ManyToManyField(Person)
+	def __str__(self):
+		return self.name
