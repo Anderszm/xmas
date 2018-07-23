@@ -7,4 +7,5 @@ urlpatterns = [
 	path('profile/', views.index, name='index'),
 	path('groups/new/', views.creategroup, name='creategroup'),
 	path('groups/new/create', views.postcreategroup, name='postcreategroup'),
+	path('groups/people/', views.people, name='people'),
 ]

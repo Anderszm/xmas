@@ -28,3 +28,6 @@ def postcreategroup(request):
 	groupname= request.POST['group_name']
 	Group.objects.create(name=groupname)
 	return HttpResponseRedirect(reverse('namedrawing:index'))
+
+def people(request):
+	return render(request,'namedrawing/groups/people.html')

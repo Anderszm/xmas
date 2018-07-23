@@ -1,0 +1,7 @@
+# Add people
+
+<form action = "{% url 'namedrawing:people' %}" method = "post">
+{%csrf_token %}
+	<input type = "text" name = "Name" id = "person_name" placeholder= "Your Name"/>
+		<input type = "submit" value = "Person Name" />
+</form>
