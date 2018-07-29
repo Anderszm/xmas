@@ -1,7 +1,8 @@
-# Add people
+<p>Add people to your group here</p>
 
-<form action = "{% url 'namedrawing:people' %}" method = "post">
-{%csrf_token %}
-	<input type = "text" name = "Name" id = "person_name" placeholder= "Your Name"/>
-		<input type = "submit" value = "Person Name" />
+<!-- Create people -->
+<form action="{% url 'namedrawing:postcreatepeople' %}" method="post">
+{% csrf_token %}
+    <input type="text" name="person_name" id="person_name" placeholder="Person Name" multiple/>
+	<input type="submit" value="Create Person" />
 </form>

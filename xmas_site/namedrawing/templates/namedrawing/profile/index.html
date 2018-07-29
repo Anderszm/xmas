@@ -1,16 +1,16 @@
 <h1>Profile Page: {{ username }}</h1>
 
-<p>This is located in ...xmas_site\namedrawing\templates\profile\index.html</p>
 <p>here, we'll set up the user profile, allow them to create a new group, see the groups that they've created, etc</p>
 
 
+<!-- Group names -->
 {% if groups %}
 	<ul>
 	{% for group in groups %}
-		<li>{{ group.name }}</li>
+		{{ group.name }}
+		<br>
 	{% endfor %}
 	</ul>
 {% else %}
 	<p>No groups are available.</p>
 {% endif %}
-
