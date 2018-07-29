@@ -4,14 +4,14 @@
 
 
 #**********************************************************
-from django.shortcuts import render
-
 # Create your views here.
-
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.urls import reverse
+from django.urls import reverse, path
 from .models import Person, Group
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 
 
 def index(request):
@@ -44,3 +44,17 @@ def postcreatepeople(request):
 	personname= request.POST['person_name']
 	Group.objects.create(name=personname)
 	return HttpResponseRedirect(reverse('namedrawing:index'))
+	
+def signup(request):
+	if request.method== 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			form.save()
+			username = form.cleaned_data.get('username')
+			raw_password = form.cleaned_data.get('password')
+			user = authenticate(username=username, password=raw_password)
+			login(request, user)
+			return redirect('home')
+	else:
+		form = UserCreationForm()
+	return render(request, 'namedrawing/profile/signup.html', {'form': form})
