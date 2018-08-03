@@ -10,6 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse, path
 from .models import Person, Group
+from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 
@@ -19,7 +20,7 @@ def index(request):
 	group_list = Group.objects.order_by('name')
 	people_list = Group.objects.order_by('name')
 	context = {
-		'username': 'Adding Group and People',
+		'username': request.user.username,
 		'groups': group_list,
 		'people': people_list,
 	}
@@ -44,17 +45,26 @@ def postcreatepeople(request):
 	personname= request.POST['person_name']
 	Group.objects.create(name=personname)
 	return HttpResponseRedirect(reverse('namedrawing:index'))
-	
+
+#signup is here
+#login is based on the MDN tutorial: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
 def signup(request):
 	if request.method== 'POST':
 		form = UserCreationForm(request.POST)
 		if form.is_valid():
-			form.save()
-			username = form.cleaned_data.get('username')
-			raw_password = form.cleaned_data.get('password')
-			user = authenticate(username=username, password=raw_password)
-			login(request, user)
-			return redirect('home')
+			# leaving this commented out for now. Getting an error doing authenticate and login
+			# stackoverflow suggested removing the authenticate. 
+			# current solution may not be scrubbing the inputs though
+			
+			# form.save()
+			# username = form.cleaned_data.get('username')
+			# raw_password = form.cleaned_data.get('password')
+			# user = authenticate(username=username, password=raw_password)
+			# login(request, user)
+			
+			user = form.save()
+			login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+			return redirect('namedrawing:index')
 	else:
 		form = UserCreationForm()
 	return render(request, 'namedrawing/profile/signup.html', {'form': form})
