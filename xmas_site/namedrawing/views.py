@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse, path
-from .models import Person, Group
+from .models import Person, Group, Membership
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
@@ -35,7 +35,13 @@ def creategroup(request):
 	
 def postcreategroup(request):
 	groupname= request.POST['group_name']
-	Group.objects.create(name=groupname)
+	
+	g1 = Group.objects.create(name=groupname)
+	
+	m1 = Membership.objects.create(user = request.user,
+		group = g1,
+		isAdmin = True)
+
 	return HttpResponseRedirect(reverse('namedrawing:people'))
 
 def createpeople(request):
