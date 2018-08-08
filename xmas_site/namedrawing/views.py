@@ -16,16 +16,19 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 def index(request):
-	template = loader.get_template('namedrawing/profile/index.html')
-	group_list = Group.objects.order_by('name')
-	people_list = Group.objects.order_by('name')
-	context = {
-		'username': request.user.username,
-		'groups': group_list,
-		'people': people_list,
-	}
-	return render(request, 'namedrawing/profile/index.html', context)
-	#HttpResponse(template.render(context, request))
+	if request.user.is_authenticated:
+		template = loader.get_template('namedrawing/profile/index.html')
+		group_list = Group.objects.order_by('name')
+		people_list = Group.objects.order_by('name')
+		context = {
+			'username': request.user.username,
+			'groups': group_list,
+			'people': people_list,
+		}
+		return render(request, 'namedrawing/profile/index.html', context)
+	else:
+		return HttpResponseRedirect(reverse('login'))
+		#HttpResponse(template.render(context, request))
 
 def creategroup(request):
 	#template = loader.get_template('namedrawing/groups/new.html')
