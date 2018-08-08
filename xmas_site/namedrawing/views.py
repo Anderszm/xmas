@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse, path
-from .models import Person, Group, Membership
+from .models import Person, Group, Membership, Friendship
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
@@ -42,8 +42,30 @@ def postcreategroup(request):
 		group = g1,
 		isAdmin = True)
 
-	return HttpResponseRedirect(reverse('namedrawing:people'))
+	return HttpResponseRedirect(reverse('namedrawing:addpersontogroup'))
 
+def addpersontogroup(request):
+	context = {'name': 'Brian'}
+	return render(request, 'namedrawing/groups/addperson.html', context)
+
+def postaddpersontogroup(request):
+	user_name = request.POST['user_username']
+	groupname = request.POST['group_groupname']
+	usr = User.objects.get(username = user_name)
+	grp = Group.objects.get(name = groupname)
+	membrship = Membership.objects.create(user = usr, group = grp)
+	# friendship = Friendship.objects.create(user = usr)
+	
+	usrlist = User.objects.filter(group__id = grp.id)
+	
+	for _user in usrlist:
+		print(_user.username)
+		friendship = Friendship.objects.create(user = _user, membership = membrship)
+	
+	return HttpResponseRedirect(reverse('namedrawing:index'))
+	
+	
+	
 def createpeople(request):
 	return render(request,'namedrawing/groups/people.html')
 
