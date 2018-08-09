@@ -56,14 +56,24 @@ def postaddpersontogroup(request):
 	groupname = request.POST['group_groupname']
 	usr = User.objects.get(username = user_name)
 	grp = Group.objects.get(name = groupname)
-	membrship = Membership.objects.create(user = usr, group = grp)
-	# friendship = Friendship.objects.create(user = usr)
 	
+	#get all membership in a group and add a friendship containing the new user
+	membershiplist = Membership.objects.filter(group__id = grp.id) 
+	for _membership in membershiplist:
+		Friendship.objects.create(user = usr, membership = _membership)
+	
+	#create new membership for this user and add friendships for all the current members of the group
+	membrship = Membership.objects.create(user = usr, group = grp)
 	usrlist = User.objects.filter(group__id = grp.id)
 	
 	for _user in usrlist:
 		print(_user.username)
-		friendship = Friendship.objects.create(user = _user, membership = membrship)
+		if _user == usr:
+			pass
+		else:
+			friendship = Friendship.objects.create(user = _user, membership = membrship)
+	
+	
 	
 	return HttpResponseRedirect(reverse('namedrawing:index'))
 	

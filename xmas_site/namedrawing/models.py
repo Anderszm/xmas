@@ -29,7 +29,7 @@ class Membership(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	group = models.ForeignKey(Group, on_delete=models.CASCADE)
 	date_joined = models.DateField(default=datetime.date.today)
-	eligible_picks = models.ManyToManyField("self", through='Friendship', symmetrical=False)
+	eligible_picks = models.ManyToManyField(User, through='Friendship', symmetrical=True, related_name="eligible_picks")
 	isAdmin = models.BooleanField(default=False)
 
 class Friendship(models.Model):
