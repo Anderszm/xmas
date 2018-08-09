@@ -33,11 +33,12 @@ def index(request):
 
 
 def creategroup(request):
-	#template = loader.get_template('namedrawing/groups/new.html')
-	context = {'name': 'Brian'}
-	#return HttpResponse(template.render(context, request))
-	return render(request, 'namedrawing/groups/new.html', context)
-	
+	if request.user.is_authenticated:
+		context = {'name': 'Brian'}
+		return render(request, 'namedrawing/groups/new.html', context)
+	else:
+		return HttpResponseRedirect(reverse('login'))
+
 def postcreategroup(request):
 	groupname= request.POST['group_name']
 	
@@ -50,9 +51,12 @@ def postcreategroup(request):
 	return HttpResponseRedirect(reverse('namedrawing:addpersontogroup'))
 
 def addpersontogroup(request):
-	context = {'name': 'Brian'}
-	return render(request, 'namedrawing/groups/addperson.html', context)
-
+	if request.user.is_authenticated:
+		context = {'name': 'Brian'}
+		return render(request, 'namedrawing/groups/addperson.html', context)
+	else:
+		return HttpResponseRedirect(reverse('login'))
+		
 def postaddpersontogroup(request):
 	user_name = request.POST['user_username']
 	groupname = request.POST['group_groupname']
@@ -74,8 +78,6 @@ def postaddpersontogroup(request):
 			pass
 		else:
 			friendship = Friendship.objects.create(user = _user, membership = membrship)
-	
-	
 	
 	return HttpResponseRedirect(reverse('namedrawing:index'))
 	
@@ -111,3 +113,10 @@ def signup(request):
 	else:
 		form = UserCreationForm()
 	return render(request, 'namedrawing/profile/signup.html', {'form': form})
+	
+	
+	
+def postsignup(request):
+	signup = request.POST('sign_up')
+	Group.objects.create(name = signup)
+	return HttpResponseRedirect(reverse('login'))
