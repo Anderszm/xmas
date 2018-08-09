@@ -35,10 +35,10 @@
 
 <br>
 
-<form action = "{% url 'namedrawing:signup' %}">
-	<input type = "submit" value = "Sign up"/>
-</form>
-<br>
+<!-- sign up link -->
+<p><a href = "{% url 'namedrawing:signup' %}">Sign up</a></p>
+
+<!-- password reset link -->
 {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
 
