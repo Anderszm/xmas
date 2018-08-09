@@ -16,6 +16,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 def index(request):
+
 	if request.user.is_authenticated:
 		template = loader.get_template('namedrawing/profile/index.html')
 		group_list = Group.objects.order_by('name')
@@ -29,6 +30,7 @@ def index(request):
 	else:
 		return HttpResponseRedirect(reverse('login'))
 		#HttpResponse(template.render(context, request))
+
 
 def creategroup(request):
 	#template = loader.get_template('namedrawing/groups/new.html')
