@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
+import uuid
 
 # Create your models here.
 # for updating models, delete the db
@@ -17,6 +18,7 @@ class Person(models.Model):
 		return self.name
 
 class Group(models.Model):
+	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	name = models.CharField(max_length = 50)
 	members = models.ManyToManyField(User, through='Membership')
 	def __str__(self):
@@ -27,4 +29,10 @@ class Membership(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	group = models.ForeignKey(Group, on_delete=models.CASCADE)
 	date_joined = models.DateField(default=datetime.date.today)
+	eligible_picks = models.ManyToManyField(User, through='Friendship', symmetrical=True, related_name="eligible_picks")
 	isAdmin = models.BooleanField(default=False)
+
+class Friendship(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	membership = models.ForeignKey(Membership, on_delete=models.CASCADE)
+	

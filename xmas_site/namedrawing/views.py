@@ -9,25 +9,28 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse, path
-from .models import Person, Group, Membership
+from .models import Person, Group, Membership, Friendship
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 
 
 def index(request):
-	template = loader.get_template('namedrawing/profile/index.html')
-	group_list = Group.objects.order_by('name')
-	people_list = Group.objects.order_by('name')
-	context = {
-		'username': request.user.username,
-		'groups': group_list,
-		'people': people_list,
-	}
+
 	if request.user.is_authenticated:
+		template = loader.get_template('namedrawing/profile/index.html')
+		group_list = Group.objects.order_by('name')
+		people_list = Group.objects.order_by('name')
+		context = {
+			'username': request.user.username,
+			'groups': group_list,
+			'people': people_list,
+		}
 		return render(request, 'namedrawing/profile/index.html', context)
 	else:
 		return HttpResponseRedirect(reverse('login'))
+		#HttpResponse(template.render(context, request))
+
 
 def creategroup(request):
 	#template = loader.get_template('namedrawing/groups/new.html')
@@ -44,8 +47,40 @@ def postcreategroup(request):
 		group = g1,
 		isAdmin = True)
 
-	return HttpResponseRedirect(reverse('namedrawing:people'))
+	return HttpResponseRedirect(reverse('namedrawing:addpersontogroup'))
 
+def addpersontogroup(request):
+	context = {'name': 'Brian'}
+	return render(request, 'namedrawing/groups/addperson.html', context)
+
+def postaddpersontogroup(request):
+	user_name = request.POST['user_username']
+	groupname = request.POST['group_groupname']
+	usr = User.objects.get(username = user_name)
+	grp = Group.objects.get(name = groupname)
+	
+	#get all membership in a group and add a friendship containing the new user
+	membershiplist = Membership.objects.filter(group__id = grp.id) 
+	for _membership in membershiplist:
+		Friendship.objects.create(user = usr, membership = _membership)
+	
+	#create new membership for this user and add friendships for all the current members of the group
+	membrship = Membership.objects.create(user = usr, group = grp)
+	usrlist = User.objects.filter(group__id = grp.id)
+	
+	for _user in usrlist:
+		print(_user.username)
+		if _user == usr:
+			pass
+		else:
+			friendship = Friendship.objects.create(user = _user, membership = membrship)
+	
+	
+	
+	return HttpResponseRedirect(reverse('namedrawing:index'))
+	
+	
+	
 def createpeople(request):
 	return render(request,'namedrawing/groups/people.html')
 

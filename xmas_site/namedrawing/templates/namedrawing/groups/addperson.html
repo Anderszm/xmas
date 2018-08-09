@@ -1,0 +1,9 @@
+<p>test {{ name }}</p>
+
+<form action="{% url 'namedrawing:postaddpersontogroup' %}" method="post">
+{% csrf_token %}
+    <input type="text" name="user_username" id="user_username" placeholder="User Name" />
+	<input type="text" name="group_groupname" id="group_groupname" placeholder="Group Name" />
+	<input type="submit" value="Add Person" />
+</form>
+
