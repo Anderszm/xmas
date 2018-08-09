@@ -24,8 +24,10 @@ def index(request):
 		'groups': group_list,
 		'people': people_list,
 	}
-	return render(request, 'namedrawing/profile/index.html', context)
-	#HttpResponse(template.render(context, request))
+	if request.user.is_authenticated:
+		return render(request, 'namedrawing/profile/index.html', context)
+	else:
+		return HttpResponseRedirect(reverse('login'))
 
 def creategroup(request):
 	#template = loader.get_template('namedrawing/groups/new.html')
