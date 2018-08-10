@@ -1,5 +1,6 @@
 {% extends "base_generic.html" %}
 
+
 {% block content %}
 
 {% if form.errors %}
@@ -14,6 +15,11 @@
     <p>Please login to see this page.</p>
   {% endif %}
 {% endif %}
+
+<!-- nav bar -->
+<div class="basic">
+{% include "navbar.html" %}    
+</div>
 
 <form method="post" action="{% url 'login' %}">
 {% csrf_token %}
