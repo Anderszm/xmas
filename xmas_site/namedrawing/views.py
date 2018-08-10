@@ -50,6 +50,32 @@ def postcreategroup(request):
 
 	return HttpResponseRedirect(reverse('namedrawing:addpersontogroup'))
 
+def joingroup(request, groupid):
+	if request.user.is_authenticated:
+		usr = request.user
+		grp = Group.objects.get(id = groupid)
+		
+		#get all membership in a group and add a friendship containing the new user
+		membershiplist = Membership.objects.filter(group__id = grp.id) 
+		for _membership in membershiplist:
+			Friendship.objects.create(user = usr, membership = _membership)
+		
+		#create new membership for this user and add friendships for all the current members of the group
+		membrship = Membership.objects.create(user = usr, group = grp)
+		usrlist = User.objects.filter(group__id = grp.id)
+		
+		for _user in usrlist:
+			print(_user.username)
+			if _user == usr:
+				pass
+			else:
+				friendship = Friendship.objects.create(user = _user, membership = membrship)
+				
+		return HttpResponseRedirect(reverse('namedrawing:index'))
+		
+	else:
+		return HttpResponseRedirect(reverse('login'))
+	
 def addpersontogroup(request):
 	if request.user.is_authenticated:
 		context = {'name': 'Brian'}
