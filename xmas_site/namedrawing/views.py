@@ -13,23 +13,26 @@ from .models import Person, Group, Membership, Friendship
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def index(request):
 
-	if request.user.is_authenticated:
-		template = loader.get_template('namedrawing/profile/index.html')
-		group_list = Group.objects.order_by('name')
-		people_list = Group.objects.order_by('name')
+	if request.user.is_authenticated:		
+		memberships = Membership.objects.filter(user = request.user)
+		grouplist = {}
+		
+		for membership in memberships:
+			grouplist[membership.group.id] = membership.group.name
+		
 		context = {
 			'username': request.user.username,
-			'groups': group_list,
-			'people': people_list,
+			'groups': grouplist
 		}
 		return render(request, 'namedrawing/profile/index.html', context)
 	else:
 		return HttpResponseRedirect(reverse('login'))
-		#HttpResponse(template.render(context, request))
 
 
 def creategroup(request):
@@ -48,7 +51,19 @@ def postcreategroup(request):
 		group = g1,
 		isAdmin = True)
 
-	return HttpResponseRedirect(reverse('namedrawing:addpersontogroup'))
+	return HttpResponseRedirect(reverse('namedrawing:index'))
+
+@login_required
+def showgroup(request, groupid):
+	membershiplist = Membership.objects.filter(group__id = groupid) 
+	#print(membershiplist)
+	context = {
+		'username': request.user.username,
+		'group': Group.objects.get(id = groupid),
+		'memberships': membershiplist,
+	}
+	
+	return render(request, 'namedrawing/groups/show.html', context)
 
 def joingroup(request, groupid):
 	if request.user.is_authenticated:

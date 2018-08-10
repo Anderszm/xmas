@@ -6,13 +6,15 @@
 <!-- Group names -->
 {% if groups %}
 	<ul>
-	{% for group in groups %}
-		{{ group.name }}
+	{% for id, name in groups.items %}
+		<a href = "{% url 'namedrawing:showgroup' groupid=id %}"> {{name}} </a>
 		<br>
 	{% endfor %}
 	</ul>
 {% else %}
 	<p>No groups are available.</p>
 {% endif %}
+
+<p><a href = "{% url 'namedrawing:creategroup' %}">New Group</a></p>
 
 <p><a href = "{% url 'logout' %}">logout</a></p>
