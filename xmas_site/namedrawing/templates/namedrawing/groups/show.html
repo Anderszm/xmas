@@ -1,0 +1,19 @@
+<h1>Group Page: {{ group.name }}</h1>
+
+<p>Here we'll show all the groups that the signed in user belongs to. We'll eventually link to a page that shows the other members in the group (and distinguish the people that they can match with for gift exchange.)</p>
+
+<h2>Members:</h2>
+{% if memberships %}
+	<ul>
+	{% for member in memberships %}
+		{{ member.user.username }} {% if member.isAdmin == True %} (Admin) {% endif %}
+		<br>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No users available are available.</p>
+{% endif %}
+
+<p><a href = "{% url 'namedrawing:index' %}">Return to Profile Page</a></p>
+
+<p><a href = "{% url 'logout' %}">logout</a></p>
