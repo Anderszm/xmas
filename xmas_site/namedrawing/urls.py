@@ -1,18 +1,15 @@
 from django.urls import path
 from . import views
+from namedrawing.views import GroupView
 
 app_name = 'namedrawing'
 urlpatterns = [
 	path('profile/', views.index, name='index'),
+	path('groups/new/', GroupView.as_view(), name='newgroup_get'),
+	path('groups/new/', GroupView.as_view(), name='newgroup_post'),
 	path('groups/<str:groupid>/show', views.showgroup, name='showgroup'),
-	path('groups/new/', views.creategroup, name='creategroup'),
-	path('groups/new/create', views.postcreategroup, name='postcreategroup'),
-	path('groups/addperson', views.addpersontogroup, name='addpersontogroup'),
 	path('groups/<str:groupid>/delete', views.deletegroup, name='deletegroup'),
 	path('groups/<str:groupid>/join', views.joingroup, name='joingroup'),
-	path('groups/addperson/add', views.postaddpersontogroup, name='postaddpersontogroup'),
-	path('people/', views.createpeople, name='people'),
-	path('people/create', views.postcreatepeople, name='postcreatepeople'),
 	path('signup/', views.signup, name='signup'),
 	
 ]
