@@ -1,0 +1,22 @@
+# dictionary:
+
+# key: value --> User: Their eligible matches
+
+
+def printlist():
+	inputdict = {
+		"Brian": ["Zach", "Caitlin", "Katy", "Tami", "Jim"],
+		"Zach": ["Brian", "Caitlin", "Katy", "Tami", "Jim"],
+		"Caitlin": ["Brian", "Caitlin", "Katy", "Tami", "Jim"],
+		"Katy": ["Brian", "Zach", "Caitlin", "Tami", "Jim"],
+		"Tami": ["Brian", "Zach", "Caitlin", "Katy", "Jim"],
+		"Jim": ["Brian", "Zach", "Caitlin", "Katy", "Tami"]
+		
+	for key, value in inputdict:
+		print(f"Person: {key}")
+		for val in value:
+			print("   List of matches:")
+			print(val)
+
+printlist()			
+	
