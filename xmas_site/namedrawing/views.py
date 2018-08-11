@@ -65,6 +65,20 @@ def showgroup(request, groupid):
 	
 	return render(request, 'namedrawing/groups/show.html', context)
 
+	
+def deletegroup(request, groupid):
+	group = Group.objects.get(id = groupid)
+	
+	membershiplist = Membership.objects.filter(group__id = groupid)
+	
+	for member in membershiplist:
+		if member.user == request.user:
+			if member.isAdmin == True:
+				group.delete()
+	
+	return HttpResponseRedirect(reverse('namedrawing:index'))
+	
+	
 def joingroup(request, groupid):
 	if request.user.is_authenticated:
 		usr = request.user
