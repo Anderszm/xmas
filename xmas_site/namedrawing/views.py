@@ -17,31 +17,26 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required
-def index(request):
-
-	if request.user.is_authenticated:		
-		memberships = Membership.objects.filter(user = request.user)
-		grouplist = {}
-		
-		for membership in memberships:
-			grouplist[membership.group.id] = membership.group.name
-		
-		context = {
-			'username': request.user.username,
-			'groups': grouplist
-		}
-		return render(request, 'namedrawing/profile/index.html', context)
-	else:
-		return HttpResponseRedirect(reverse('login'))
+def index(request):	
+	memberships = Membership.objects.filter(user = request.user)
+	grouplist = {}
+	
+	for membership in memberships:
+		grouplist[membership.group.id] = membership.group.name
+	
+	context = {
+		'username': request.user.username,
+		'groups': grouplist
+	}
+	return render(request, 'namedrawing/profile/index.html', context)
 
 
+@login_required
 def creategroup(request):
-	if request.user.is_authenticated:
-		context = {'name': 'Brian'}
-		return render(request, 'namedrawing/groups/new.html', context)
-	else:
-		return HttpResponseRedirect(reverse('login'))
+	context = {'name': 'Brian'}
+	return render(request, 'namedrawing/groups/new.html', context)
 
+@login_required
 def postcreategroup(request):
 	groupname= request.POST['group_name']
 	
@@ -65,7 +60,7 @@ def showgroup(request, groupid):
 	
 	return render(request, 'namedrawing/groups/show.html', context)
 
-	
+@login_required
 def deletegroup(request, groupid):
 	group = Group.objects.get(id = groupid)
 	
@@ -78,14 +73,23 @@ def deletegroup(request, groupid):
 	
 	return HttpResponseRedirect(reverse('namedrawing:index'))
 	
-	
+@login_required
 def joingroup(request, groupid):
-	if request.user.is_authenticated:
-		usr = request.user
-		grp = Group.objects.get(id = groupid)
-		
-		#get all membership in a group and add a friendship containing the new user
-		membershiplist = Membership.objects.filter(group__id = grp.id) 
+	usr = request.user
+	grp = Group.objects.get(id = groupid)
+	
+	#get all membership in a group and add a friendship containing the new user
+	membershiplist = Membership.objects.filter(group__id = grp.id) 
+	
+	
+	isMember = False
+	#check if user is already a member of the group
+	for member in membershiplist:
+		if member.user == usr:
+			isMember = True
+	
+	# create membership and friendships if not already a member
+	if not isMember:
 		for _membership in membershiplist:
 			Friendship.objects.create(user = usr, membership = _membership)
 		
@@ -99,11 +103,8 @@ def joingroup(request, groupid):
 				pass
 			else:
 				friendship = Friendship.objects.create(user = _user, membership = membrship)
-				
-		return HttpResponseRedirect(reverse('namedrawing:index'))
-		
-	else:
-		return HttpResponseRedirect(reverse('login'))
+			
+	return HttpResponseRedirect(reverse('namedrawing:index'))
 	
 def addpersontogroup(request):
 	if request.user.is_authenticated:
