@@ -14,64 +14,87 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.views import View
+from django.utils.decorators import method_decorator
 
 
 @login_required
-def index(request):
-
-	if request.user.is_authenticated:		
-		memberships = Membership.objects.filter(user = request.user)
-		grouplist = {}
-		
-		for membership in memberships:
-			grouplist[membership.group.id] = membership.group.name
-		
-		context = {
-			'username': request.user.username,
-			'groups': grouplist
-		}
-		return render(request, 'namedrawing/profile/index.html', context)
-	else:
-		return HttpResponseRedirect(reverse('login'))
-
-
-def creategroup(request):
-	if request.user.is_authenticated:
-		context = {'name': 'Brian'}
-		return render(request, 'namedrawing/groups/new.html', context)
-	else:
-		return HttpResponseRedirect(reverse('login'))
-
-def postcreategroup(request):
-	groupname= request.POST['group_name']
+def index(request):	
+	memberships = Membership.objects.filter(user = request.user)
+	grouplist = {}
 	
-	g1 = Group.objects.create(name=groupname)
+	for membership in memberships:
+		grouplist[membership.group.id] = membership.group.name
 	
-	m1 = Membership.objects.create(user = request.user,
-		group = g1,
-		isAdmin = True)
-
-	return HttpResponseRedirect(reverse('namedrawing:index'))
-
-@login_required
-def showgroup(request, groupid):
-	membershiplist = Membership.objects.filter(group__id = groupid) 
-	#print(membershiplist)
 	context = {
 		'username': request.user.username,
-		'group': Group.objects.get(id = groupid),
-		'memberships': membershiplist,
+		'groups': grouplist
 	}
-	
-	return render(request, 'namedrawing/groups/show.html', context)
+	return render(request, 'namedrawing/profile/index.html', context)
 
-def joingroup(request, groupid):
-	if request.user.is_authenticated:
-		usr = request.user
-		grp = Group.objects.get(id = groupid)
+@method_decorator(login_required, name='dispatch')
+class GroupView_new(View):
+
+	def get(self, request):
+		context = {'name': request.user.username}
+		return render(request, 'namedrawing/groups/new.html', context)
+	
+	def post(self, request):
+		groupname= request.POST['group_name']
+	
+		g1 = Group.objects.create(name=groupname)
 		
-		#get all membership in a group and add a friendship containing the new user
-		membershiplist = Membership.objects.filter(group__id = grp.id) 
+		m1 = Membership.objects.create(user = request.user,
+			group = g1, 
+			isAdmin = True)
+			
+		return HttpResponseRedirect(reverse('namedrawing:index'))
+		
+		
+@method_decorator(login_required, name='dispatch')
+class GroupView(View):
+	def get(self, request, groupid):
+		membershiplist = Membership.objects.filter(group__id = groupid) 
+		#print(membershiplist)
+		context = {
+			'username': request.user.username,
+			'group': Group.objects.get(id = groupid),
+			'memberships': membershiplist,
+		}
+		
+		return render(request, 'namedrawing/groups/show.html', context)
+
+	#delete route
+	def post(self, request, groupid):
+		group = Group.objects.get(id = groupid)
+		
+		membershiplist = Membership.objects.filter(group__id = groupid)
+		
+		for member in membershiplist:
+			if member.user == request.user:
+				if member.isAdmin == True:
+					group.delete()
+		
+		return HttpResponseRedirect(reverse('namedrawing:index'))
+
+	
+@login_required
+def joingroup(request, groupid):
+	usr = request.user
+	grp = Group.objects.get(id = groupid)
+	
+	#get all membership in a group and add a friendship containing the new user
+	membershiplist = Membership.objects.filter(group__id = grp.id) 
+	
+	
+	isMember = False
+	#check if user is already a member of the group
+	for member in membershiplist:
+		if member.user == usr:
+			isMember = True
+	
+	# create membership and friendships if not already a member
+	if not isMember:
 		for _membership in membershiplist:
 			Friendship.objects.create(user = usr, membership = _membership)
 		
@@ -85,52 +108,9 @@ def joingroup(request, groupid):
 				pass
 			else:
 				friendship = Friendship.objects.create(user = _user, membership = membrship)
-				
-		return HttpResponseRedirect(reverse('namedrawing:index'))
-		
-	else:
-		return HttpResponseRedirect(reverse('login'))
-	
-def addpersontogroup(request):
-	if request.user.is_authenticated:
-		context = {'name': 'Brian'}
-		return render(request, 'namedrawing/groups/addperson.html', context)
-	else:
-		return HttpResponseRedirect(reverse('login'))
-		
-def postaddpersontogroup(request):
-	user_name = request.POST['user_username']
-	groupname = request.POST['group_groupname']
-	usr = User.objects.get(username = user_name)
-	grp = Group.objects.get(name = groupname)
-	
-	#get all membership in a group and add a friendship containing the new user
-	membershiplist = Membership.objects.filter(group__id = grp.id) 
-	for _membership in membershiplist:
-		Friendship.objects.create(user = usr, membership = _membership)
-	
-	#create new membership for this user and add friendships for all the current members of the group
-	membrship = Membership.objects.create(user = usr, group = grp)
-	usrlist = User.objects.filter(group__id = grp.id)
-	
-	for _user in usrlist:
-		print(_user.username)
-		if _user == usr:
-			pass
-		else:
-			friendship = Friendship.objects.create(user = _user, membership = membrship)
-	
+			
 	return HttpResponseRedirect(reverse('namedrawing:index'))
-	
-	
-	
-def createpeople(request):
-	return render(request,'namedrawing/groups/people.html')
 
-def postcreatepeople(request):
-	personname= request.POST['person_name']
-	Group.objects.create(name=personname)
-	return HttpResponseRedirect(reverse('namedrawing:index'))
 
 #signup is here
 #login is based on the MDN tutorial: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
@@ -156,8 +136,3 @@ def signup(request):
 	return render(request, 'namedrawing/profile/signup.html', {'form': form})
 	
 	
-	
-def postsignup(request):
-	signup = request.POST('sign_up')
-	Group.objects.create(name = signup)
-	return HttpResponseRedirect(reverse('login'))
