@@ -33,7 +33,7 @@ def index(request):
 	return render(request, 'namedrawing/profile/index.html', context)
 
 @method_decorator(login_required, name='dispatch')
-class GroupView(View):
+class GroupView_new(View):
 
 	def get(self, request):
 		context = {'name': request.user.username}
@@ -49,31 +49,34 @@ class GroupView(View):
 			isAdmin = True)
 			
 		return HttpResponseRedirect(reverse('namedrawing:index'))
+		
+		
+@method_decorator(login_required, name='dispatch')
+class GroupView(View):
+	def get(self, request, groupid):
+		membershiplist = Membership.objects.filter(group__id = groupid) 
+		#print(membershiplist)
+		context = {
+			'username': request.user.username,
+			'group': Group.objects.get(id = groupid),
+			'memberships': membershiplist,
+		}
+		
+		return render(request, 'namedrawing/groups/show.html', context)
 
-@login_required
-def showgroup(request, groupid):
-	membershiplist = Membership.objects.filter(group__id = groupid) 
-	#print(membershiplist)
-	context = {
-		'username': request.user.username,
-		'group': Group.objects.get(id = groupid),
-		'memberships': membershiplist,
-	}
-	
-	return render(request, 'namedrawing/groups/show.html', context)
+	#delete route
+	def post(self, request, groupid):
+		group = Group.objects.get(id = groupid)
+		
+		membershiplist = Membership.objects.filter(group__id = groupid)
+		
+		for member in membershiplist:
+			if member.user == request.user:
+				if member.isAdmin == True:
+					group.delete()
+		
+		return HttpResponseRedirect(reverse('namedrawing:index'))
 
-@login_required
-def deletegroup(request, groupid):
-	group = Group.objects.get(id = groupid)
-	
-	membershiplist = Membership.objects.filter(group__id = groupid)
-	
-	for member in membershiplist:
-		if member.user == request.user:
-			if member.isAdmin == True:
-				group.delete()
-	
-	return HttpResponseRedirect(reverse('namedrawing:index'))
 	
 @login_required
 def joingroup(request, groupid):
