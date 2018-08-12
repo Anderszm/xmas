@@ -1,7 +1,9 @@
 
+{% include "navbar.html" %}    
+
 <h1>Profile Page: {{ username }}</h1>
 <div class="basic">
-{% include "navbar.html" %}    
+
 </div>
 <p>here, we'll set up the user profile, allow them to create a new group, see the groups that they've created, etc</p>
 
@@ -19,4 +21,4 @@
 	<p>No groups are available.</p>
 {% endif %}
 
-<p><a href = "{% url 'namedrawing:newgroup_get' %}">New Group</a></p>
+<!--<p><a href = "{% url 'namedrawing:newgroup_get' %}">New Group</a></p>-->
