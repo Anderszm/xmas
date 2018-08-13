@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+      {% include "partials/head_content.html" %}
+	  {% load static %}
+      
+      <!-- <link rel="stylesheet" type="text/css" href="styles/styles.css"> -->
+      <link rel="stylesheet" type="text/css" href="{% static 'styles/light-bootstrap-dashboard.css' %}">
+      
+    </head>
+    <body>
+        <div class="wrapper">
+            {% include "partials/sidebar.html" %}
+            
+            <div class="main-panel">
+                {% include "partials/navbar_loggedin.html" %}
+        
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Edit Profile</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="row">
+                                                <div class="col-md-5 pl-2">
+                                                    <div class="form-group">
+                                                        <label>Username</label>
+                                                        <input type="text" class="form-control" placeholder="Username" value="{{ username }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-7 pl-2">
+                                                    <div class="form-group">
+                                                        <label>Email address</label>
+                                                        <input type="email" class="form-control" placeholder="Email" value="<!-- <%= doc.email %> -->">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 pl-2">
+                                                    <div class="form-group">
+                                                        <label>First Name</label>
+                                                        <input type="text" class="form-control" placeholder="First Name" value="<!-- <%= doc.firstname %> -->">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pl-2">
+                                                    <div class="form-group">
+                                                        <label>Last Name</label>
+                                                        <input type="text" class="form-control" placeholder="Last Name" value="<!-- <%= doc.lastname %> -->">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-info btn-fill pull-left">Update Profile</button>
+                                            <div class="clearfix"></div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="{% static 'scripts/light-bootstrap-dashboard.js' type="text/javascript %}"></script>
+        
+{% include "partials/footer.html" %}
+    

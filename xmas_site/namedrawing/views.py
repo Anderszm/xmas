@@ -33,6 +33,22 @@ def index(request):
 	return render(request, 'namedrawing/profile/index.html', context)
 
 @method_decorator(login_required, name='dispatch')
+class ProfileView(View):
+	def get(self, request):	
+		memberships = Membership.objects.filter(user = request.user)
+		grouplist = {}
+		
+		for membership in memberships:
+			grouplist[membership.group.id] = membership.group.name
+		
+		context = {
+			'activetab': 'User Profile',
+			'username': request.user.username,
+			'groups': grouplist
+		}
+		return render(request, 'namedrawing/profile/show.html', context)
+
+@method_decorator(login_required, name='dispatch')
 class GroupView_new(View):
 
 	def get(self, request):

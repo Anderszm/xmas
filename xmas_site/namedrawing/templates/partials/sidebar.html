@@ -1,0 +1,58 @@
+<div class="sidebar" data-color="blue" data-image="https://images.unsplash.com/photo-1509192979022-927d6dcf72fa?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=cad3f9b6c98a032d1d88811205e54b69&auto=format&fit=crop&w=500&q=60">
+<!--
+Tip 1: You can change the color of the sidebar using: data-color="purple | blue | green | orange | red"
+
+Tip 2: you can also add an image using data-image tag
+-->
+    <div class="sidebar-wrapper">
+        <div class="logo">
+            <a href="http://merchant.gavabox.com" class="simple-text">
+                Santa's Helpers
+            </a>
+        </div>
+        <ul class="nav">
+            <!--<li>-->
+            <!--    <a class="nav-link" href="dashboard.html">-->
+            <!--        <i class="fas fa-chart-pie"></i>-->
+            <!--        <p>Dashboard</p>-->
+            <!--    </a>-->
+            <!--</li>-->
+            <li class="nav-item {% if activetab == 'User Profile' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'namedrawing:profile_get' %}">
+                    <i class="fa fa-user-o" aria-hidden="true"></i>
+                    <p>User Profile</p>
+                </a>
+            </li>
+            <li class="{% if activetab == 'Rewards Manager' %} active {% endif %}">
+                <a class="nav-link" href="/rewards">
+                    <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                    <p>Rewards Manager</p>
+                </a>
+            </li>
+            <li class="{% if activetab == 'Store Manager' %} active {% endif %}">
+                <a class="nav-link" href="/stores">
+                    <i class="fa fa-home" aria-hidden="true"></i>
+                    <p>Store Manager</p>
+                </a>
+            </li>
+            <li class="{% if activetab == 'Event & Promotion Manager' %} active {% endif %}">
+                <a class="nav-link" href="/events">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                    <p>Events & Promotions</p>
+                </a>
+            </li>
+            <li class="{% if activetab == 'Offer Manager' %} active {% endif %}">
+                <a class="nav-link" href="/offers">
+                    <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+                    <p>Offer Manager</p>
+                </a>
+            </li>
+            <li class="{% if activetab == 'Log Rewards' %} active {% endif %}">
+                <a class="nav-link" href="/reward">
+                    <i class="fa fa-gift" aria-hidden="true"></i>
+                    <p>Reward</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
