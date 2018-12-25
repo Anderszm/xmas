@@ -1,10 +1,10 @@
 from django.urls import path
 from . import views
-from namedrawing.views import GroupView, GroupView_new
+from namedrawing.views import GroupView, GroupView_new, ProfileView
 
 app_name = 'namedrawing'
 urlpatterns = [
-	path('profile/', views.index, name='index'),
+	path('profile/', ProfileView.as_view(), name='profile_get'),
 	path('groups/new/', GroupView_new.as_view(), name='newgroup_get'),
 	path('groups/new/', GroupView_new.as_view(), name='newgroup_post'),
 	path('groups/<str:groupid>', GroupView.as_view(), name='showgroup'),
