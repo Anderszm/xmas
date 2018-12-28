@@ -1,4 +1,4 @@
-{% extends "base_generic.html" %}
+
 
 
 {% block content %}
@@ -18,34 +18,48 @@
 
 <!-- nav bar -->
 <div class="basic">
-{% include "navbar.html" %}    
+{% include "navbar.html" %}
 </div>
 
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-
-<div>
-  <td>{{ form.username.label_tag }}</td>
-  <td>{{ form.username }}</td>
-</div>
-<div>
-  <td>{{ form.password.label_tag }}</td>
-  <td>{{ form.password }}</td>
-</div>
-
-<div>
-  <input type="submit" value="login" />
-  <input type="hidden" name="next" value="{{ next }}" />
-</div>
+<!-- Form fields -->
+<form>
+    <div class="row justify-content-center">
+      <div class="form-group row">
+        <div class="col-sm-25">
+            <div>
+                <td>{{ form.username.label_tag }}</td>
+                <td>{{ form.username }}</td>
+            </div>
+        </div>
+      </div>  
+    </div>
+    <div class="row justify-content-center">
+      <div class="form-group row">
+        <div class="col-sm-25">
+          <div>
+            <td>{{ form.password.label_tag }}</td>
+            <td>{{ form.password }}</td>
+          </div>
+        </div>
+      </div>
+    </div>
+</form>
+  <div class="row justify-content-center">
+    <!-- <div class="col-12 text-center"> -->
+          <input type="submit" value="Login"/>
+    </div>
+  </br>
+    <input type="hidden" name="next" value="{{ next }}" />
+  <!-- sign up link -->
+  <div class="row justify-content-center">
+    <p><a href = "{% url 'namedrawing:signup' %}">Sign up</a></p>
+  </div>
+  <!-- password reset link -->
+  <div class="row justify-content-center">
+    {# Assumes you setup the password_reset view in your URLconf #}
+    <a href="{% url 'password_reset' %}">Lost password?</a>
+  </div>
 </form>
 
-<br>
-
-<!-- sign up link -->
-<p><a href = "{% url 'namedrawing:signup' %}">Sign up</a></p>
-
-<!-- password reset link -->
-{# Assumes you setup the password_reset view in your URLconf #}
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
 
 {% endblock %}

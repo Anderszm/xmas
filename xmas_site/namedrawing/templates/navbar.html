@@ -2,17 +2,15 @@
 {% include "bootstrap_cdn.html" %}
 
 <!-- nav bar -->
-<header>
+</br>
         <div class="navbar navbar-default navbar-static-top 
         {% block nav-style %}{% endblock %}">
             <div class="container p-none">
-                <div class="navbar-header">
-				<!-- buttons or links below -->
-                    <a class="navbar-brand" href = "{% url 'namedrawing:newgroup_get' %}">New Group</a>
-					<a class="navbar-brand" href = "{% url 'logout' %}">logout</a>
-					<a class="navbar-brand" href="/">Home</a>
-					
-                </div>
+                    <!-- buttons or links below -->
+                        <a class="navbar-brand" href = "{% url 'namedrawing:profile_get' %}">Home</a>
+                        <a class="navbar-brand" href = "{% url 'namedrawing:newgroup_get' %}">New Group</a>
+                        <a class="navbar-brand" href = "{% url 'logout' %}">Logout</a>
+                </nav>
             </div>
         </div>
 </header>
