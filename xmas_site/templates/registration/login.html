@@ -1,0 +1,65 @@
+
+
+
+{% block content %}
+
+{% if form.errors %}
+  <p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next %}
+  {% if user.is_authenticated %}
+    <p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+  {% else %}
+    <p>Please login to see this page.</p>
+  {% endif %}
+{% endif %}
+
+<!-- nav bar -->
+<div class="basic">
+{% include "navbar.html" %}
+</div>
+
+<!-- Form fields -->
+<form>
+    <div class="row justify-content-center">
+      <div class="form-group row">
+        <div class="col-sm-25">
+            <div>
+                <td>{{ form.username.label_tag }}</td>
+                <td>{{ form.username }}</td>
+            </div>
+        </div>
+      </div>  
+    </div>
+    <div class="row justify-content-center">
+      <div class="form-group row">
+        <div class="col-sm-25">
+          <div>
+            <td>{{ form.password.label_tag }}</td>
+            <td>{{ form.password }}</td>
+          </div>
+        </div>
+      </div>
+    </div>
+</form>
+  <div class="row justify-content-center">
+    <!-- <div class="col-12 text-center"> -->
+          <input type="submit" value="Login"/>
+    </div>
+  </br>
+    <input type="hidden" name="next" value="{{ next }}" />
+  <!-- sign up link -->
+  <div class="row justify-content-center">
+    <p><a href = "{% url 'namedrawing:signup' %}">Sign up</a></p>
+  </div>
+  <!-- password reset link -->
+  <div class="row justify-content-center">
+    {# Assumes you setup the password_reset view in your URLconf #}
+    <a href="{% url 'password_reset' %}">Lost password?</a>
+  </div>
+</form>
+
+
+{% endblock %}
