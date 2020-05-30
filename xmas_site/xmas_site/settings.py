@@ -41,10 +41,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -55,7 +55,7 @@ ROOT_URLCONF = 'xmas_site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['./templates',],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,5 +123,5 @@ STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, "staticfiles"), 
 ]
 
-LOGIN_REDIRECT_URL = '/profile/'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = '/userlandingpage/'
+#LOGOUT_REDIRECT_URL = 'login'
