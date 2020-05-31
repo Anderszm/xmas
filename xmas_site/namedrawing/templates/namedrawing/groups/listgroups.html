@@ -1,0 +1,14 @@
+<h2>{{ user }}, you are a member of the following groups:</h2>
+{% if groups %}
+	<ul>
+	{% for key, value in groups.items %}
+        <p><a href="{% url 'namedrawing:showgroup' groupid=key%}">{{ value }}</a></p>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No users available are available.</p>
+{% endif %}
+
+<p><a href = "{% url 'namedrawing:profile_get' %}">Return to Profile Page</a></p>
+
+<p><a href = "{% url 'logout' %}">logout</a></p>
