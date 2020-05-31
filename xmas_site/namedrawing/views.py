@@ -1,9 +1,4 @@
-#**********************************************************
-# Name		Date		Change
-# Zach		7/29/18		Adjusted postcreategroup to redirect to people.html
 
-
-#**********************************************************
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
@@ -17,7 +12,6 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.utils.decorators import method_decorator
 
-
 @login_required
 def index(request):	
 	memberships = Membership.objects.filter(user = request.user)
@@ -30,7 +24,25 @@ def index(request):
 		'username': request.user.username,
 		'groups': grouplist
 	}
-	return render(request, 'namedrawing/profile/index.html', context)
+	return render(request, 'accounts/index.html', context)
+
+#signup is here
+#login is based on the MDN tutorial: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
+def signup(request):
+    context = {}
+    form = UserCreationForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            user = form.save()
+            login(request,user)
+            return render(request,'../templates/registration/login.html')
+			
+    context['form']=form
+    return render(request,'registration/signup.html',context)
+
+@login_required
+def userlandingpage(request):
+	return render(request, 'namedrawing/userlandingpage.html')
 
 @method_decorator(login_required, name='dispatch')
 class ProfileView(View):
@@ -64,7 +76,7 @@ class GroupView_new(View):
 			group = g1, 
 			isAdmin = True)
 			
-		return HttpResponseRedirect(reverse('namedrawing:index'))
+		return HttpResponseRedirect(reverse('namedrawing:userlandingpage'))
 		
 		
 @method_decorator(login_required, name='dispatch')
@@ -77,8 +89,15 @@ class GroupView(View):
 			'group': Group.objects.get(id = groupid),
 			'memberships': membershiplist,
 		}
+		users=[]
+		for member in membershiplist:
+			users.append(member.user_id)
+
+		if(request.user.id in users):
+			return render(request, 'namedrawing/groups/show.html', context)
+		else:
+			return HttpResponseRedirect(reverse('namedrawing:userlandingpage'))
 		
-		return render(request, 'namedrawing/groups/show.html', context)
 
 	#delete route
 	def post(self, request, groupid):
@@ -93,7 +112,21 @@ class GroupView(View):
 		
 		return HttpResponseRedirect(reverse('namedrawing:index'))
 
+@login_required
+def listgroups(request):
+	membershiplist = Membership.objects.filter(user__id = request.user.id)
 	
+	grouplist = {}
+	for groups in membershiplist:
+		grouplist[groups.group_id]=groups.group
+	
+	context = {
+		'username': request.user.username,
+		'groups': grouplist
+	}
+
+	return render(request, 'namedrawing/groups/listgroups.html', context)
+
 @login_required
 def joingroup(request, groupid):
 	usr = request.user
@@ -127,28 +160,4 @@ def joingroup(request, groupid):
 			
 	return HttpResponseRedirect(reverse('namedrawing:index'))
 
-
-#signup is here
-#login is based on the MDN tutorial: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
-def signup(request):
-	if request.method== 'POST':
-		form = UserCreationForm(request.POST)
-		if form.is_valid():
-			# leaving this commented out for now. Getting an error doing authenticate and login
-			# stackoverflow suggested removing the authenticate. 
-			# current solution may not be scrubbing the inputs though
-			
-			# form.save()
-			# username = form.cleaned_data.get('username')
-			# raw_password = form.cleaned_data.get('password')
-			# user = authenticate(username=username, password=raw_password)
-			# login(request, user)
-			
-			user = form.save()
-			login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-			return redirect('namedrawing:index')
-	else:
-		form = UserCreationForm()
-	return render(request, 'namedrawing/profile/signup.html', {'form': form})
-	
 	
